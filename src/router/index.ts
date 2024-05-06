@@ -1,12 +1,13 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import LoginView from '@/views/LoginView.vue'
-import SignUpView from '@/views/SignUpView.vue'
-import ProfileView from '@/views/ProfileView.vue'
-import GroupView from '@/views/GroupView.vue'
+import StatsView from '@/views/StatsView.vue'
+import GroupInfoView from '@/views/GroupInfoView.vue'
 import GroupsListView from '@/views/GroupsListView.vue'
 import TestView from '@/views/TestView.vue'
 import TestsListView from '@/views/TestsListView.vue'
-import CreateTestView from '@/views/CreateTestView.vue'
+import UsersListView from '@/views/UsersListView.vue'
+import TestEditorView from '@/views/TestEditorView.vue'
+import UserInfoView from '@/views/UserInfoView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,51 +15,98 @@ const router = createRouter({
     {
       path: '/',
       name: 'home',
-      redirect: '/tests'
+      redirect: '/tests',
+      meta: {
+        title: 'Тестирование работников'
+      }
     },
     {
       path: '/tests',
       name: 'tests',
-      component: TestsListView
+      component: TestsListView,
+      meta: {
+        title: 'Тесты'
+      }
+    },
+    {
+      path: '/tests/:id',
+      name: 'test-info',
+      component: TestEditorView,
+      meta: {
+        title: 'Тест'
+      }
     },
     {
       path: '/tests/new',
       name: 'create-test',
-      component: CreateTestView
+      component: TestEditorView,
+      meta: {
+        title: 'Создание теста'
+      }
     },
     {
       path: '/tests/:id',
       name: 'test',
-      component: TestView
+      component: TestView,
+      meta: {
+        title: 'Тест'
+      }
+    },
+    {
+      path: '/users',
+      name: 'users',
+      component: UsersListView,
+      meta: {
+        title: 'Сотрудники'
+      }
+    },
+    {
+      path: '/users/:id',
+      name: 'user-info',
+      component: UserInfoView,
+      meta: {
+        title: 'Сотрудник'
+      }
     },
     {
       path: '/groups',
       name: 'groups',
-      component: GroupsListView
+      component: GroupsListView,
+      meta: {
+        title: 'Группы'
+      }
     },
     {
       path: '/groups/:id',
-      name: 'group',
-      component: GroupView
+      name: 'group-info',
+      component: GroupInfoView,
+      meta: {
+        title: 'Группа'
+      }
     },
     {
-      path: '/profile',
-      name: 'profile',
-      component: ProfileView
+      path: '/stats',
+      name: 'stats',
+      component: StatsView,
+      meta: {
+        title: 'Статистика'
+      }
     },
     {
       path: '/login',
       name: 'login',
       component: LoginView,
-      meta: { hideSidebar: true }
-    },
-    {
-      path: '/signup',
-      name: 'signup',
-      component: SignUpView,
-      meta: { hideSidebar: true }
+      meta: {
+        title: 'Войти',
+        hideSidebar: true
+      }
     }
   ]
+})
+
+router.beforeEach((to, from, next) => {
+  document.title = to.meta.title
+  next()
 })
 
 export default router

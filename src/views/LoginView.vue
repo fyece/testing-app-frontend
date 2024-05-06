@@ -4,15 +4,11 @@
       class="flex flex-col items-center gap-8 w-96 p-8 bg-white border border-gray-200 rounded-lg"
     >
       <h2 class="text-2xl font-semibold">Войти</h2>
-      <form class="w-full flex flex-col gap-5">
+      <form class="w-full flex items-center flex-col gap-5">
         <InputBase v-model="email" name="email" type="email" placeholder="Email" />
         <InputBase v-model="password" name="password" type="password" placeholder="Пароль" />
         <ButtonBase @click="login">Войти</ButtonBase>
       </form>
-      <span class="text-md text-center text-gray-500">
-        Нет аккаунта?
-        <RouterLink to="/signup" class="text-blue-500 font-semibold">Зарегистрироваться</RouterLink>
-      </span>
     </div>
   </div>
 </template>

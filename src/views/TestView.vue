@@ -6,5 +6,5 @@ const testId = router.currentRoute.value.params.id
 </script>
 
 <template>
-  <secton class="p-8">Test with id: {{ testId }}</secton>
+  <secton class="p-4">Test with id: {{ testId }}</secton>
 </template>
