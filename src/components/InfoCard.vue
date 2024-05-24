@@ -20,9 +20,9 @@ interface InfoRow {
   value: string
 }
 interface Props {
-  title: string
-  subtitle?: string
-  infoRows: InfoRow[]
+  title: string | null
+  subtitle?: string | null
+  infoRows: InfoRow[] | null
 }
 
 const props = defineProps<Props>()

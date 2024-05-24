@@ -1,4 +1,5 @@
 import instance from '@/api/axios'
+import type { Test, UserTest } from '@/interfaces/test.interface'
 import type { User } from '@/interfaces/user.interface'
 import { defineStore } from 'pinia'
 
@@ -33,8 +34,24 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const getAllUserTests = async (userId: number) => {
+    try {
+      const { data } = await instance.get(`users/${userId}/tests`)
+      const tests: UserTest[] = data
+      return {
+        status: 'success',
+        tests
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
   return {
     getAllUsers,
-    getUserById
+    getUserById,
+    getAllUserTests
   }
 })

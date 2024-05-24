@@ -18,10 +18,10 @@
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
 import InputBase from '@/components/inputs/InputBase.vue'
 import { useAuthStore } from '@/stores/auth'
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-const auth = useAuthStore()
+const authStore = useAuthStore()
 const router = useRouter()
 
 const email = defineModel<string>('email', { default: '' })
@@ -30,9 +30,13 @@ const password = defineModel<string>('password', { default: '' })
 const isLoading = ref(false)
 const errorMessage = ref<string | null>(null)
 
+onMounted(() => {
+  authStore.logout()
+})
+
 const login = async () => {
   isLoading.value = true
-  const res = await auth.login(email.value, password.value)
+  const res = await authStore.login(email.value, password.value)
   if (res.status === 'success') {
     errorMessage.value = null
     router.push({ name: 'home' })

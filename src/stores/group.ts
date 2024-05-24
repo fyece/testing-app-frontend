@@ -1,24 +1,28 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import type { Group } from '@/interfaces/group.interface'
+import instance from '@/api/axios'
 
 export const useGroupStore = defineStore('group', () => {
   async function getAllGroups() {
-    axios.get('groups').then((response) => {
-      try {
-        const { data } = response
-        return data
-      } catch (error) {
-        console.warn(error)
+    try {
+      const { data } = await instance.get('groups')
+      const groups: Group[] = data
+      return {
+        status: 'success',
+        groups: groups
       }
-      return []
-    })
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
   }
 
   async function searchGroups(query: string) {
     let groups = null
     try {
-      axios.get(`groups?search=${query}`).then((response) => (groups = response.data))
+      instance.get(`groups?search=${query}`).then((response) => (groups = response.data))
     } catch (error) {
       console.warn(error)
     }
@@ -26,13 +30,18 @@ export const useGroupStore = defineStore('group', () => {
   }
 
   async function getGroupById(id: number) {
-    let group = null
     try {
-      group = await axios.get(`groups/${id}`).then((response) => response.data)
+      const { data } = await instance.get(`groups/${id}`)
+      const group: Group = data
+      return {
+        status: 'success',
+        group
+      }
     } catch (error) {
-      console.warn(error)
+      return {
+        status: 'failed'
+      }
     }
-    return group
   }
 
   return { getAllGroups, searchGroups, getGroupById }

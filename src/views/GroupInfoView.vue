@@ -1,7 +1,7 @@
 <template>
   <SideMenuTemplate>
     <template #aside>
-      <InfoCard :title="'Команда техподдержки'" :info-rows="infoRows" />
+      <InfoCard :title="group?.name ?? null" :info-rows="infoRows" />
     </template>
     <template #main>
       <header class="flex justify-between items-center">
@@ -19,9 +19,16 @@ import InfoCard from '@/components/InfoCard.vue'
 import SideMenuTemplate from '@/components/SideMenuTemplate.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
 import ModalAddMember from '@/components/modals/ModalAddMember.vue'
-import { computed, onMounted } from 'vue'
+import type { Group } from '@/interfaces/group.interface'
+import { useGroupStore } from '@/stores/group'
+import { computed, onMounted, ref } from 'vue'
 import { useModal } from 'vue-final-modal'
 import { useRouter } from 'vue-router'
+
+interface InfoRow {
+  title: string
+  value: string
+}
 
 const { open, close } = useModal({
   component: ModalAddMember,
@@ -35,19 +42,11 @@ const { open, close } = useModal({
   }
 })
 
+const groupStore = useGroupStore()
 const router = useRouter()
 const groupId = computed(() => Number(router.currentRoute.value.params.id) ?? null)
-
-const infoRows = [
-  {
-    title: 'Количество сотрудников',
-    value: '32'
-  },
-  {
-    title: 'Средний результат',
-    value: '74%'
-  }
-]
+const group = ref<Group | null>(null)
+const infoRows = ref<InfoRow[] | null>(null)
 
 const members = [
   {
@@ -73,9 +72,40 @@ const members = [
   }
 ]
 
-onMounted(() => {
-  console.log('getGroupInfo', groupId.value)
+const isLoading = ref(false)
+const errorMessage = ref<string | null>(null)
+
+onMounted(async () => {
+  getGroupInfo()
 })
+
+const getGroupInfo = async () => {
+  isLoading.value = true
+  const res = await groupStore.getGroupById(groupId.value)
+
+  if (res.status === 'success' && res.group) {
+    errorMessage.value = null
+    group.value = res.group
+    infoRows.value = [
+      {
+        title: 'Количество сотрудников',
+        value: res.group.totalUsers.toString()
+      },
+      {
+        title: 'Средний результат',
+        value: res.group.averageResultPercent
+          ? res.group.averageResultPercent.toString() + '%'
+          : '-'
+      }
+    ]
+  } else {
+    errorMessage.value = 'Произошла ошибка при получении информации о группе'
+    group.value = null
+    infoRows.value = null
+  }
+}
+
+isLoading.value = false
 </script>
 
 <style scoped></style>

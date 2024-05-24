@@ -2,7 +2,7 @@
   <section class="p-4 flex flex-col h-full rounded-xl bg-white">
     <h2 class="text-4xl mb-5 font-semibold">Группы</h2>
     <div class="flex items-center justify-between mb-3">
-      <p class="font-medium">Всего: {{ groups.length }} групп</p>
+      <p class="font-medium">Всего: {{ groups?.length ?? 0 }} групп</p>
       <ButtonBase @click="openAddGroupModal">Добавить группу</ButtonBase>
     </div>
     <GroupsListTable :groups="groups" />
@@ -10,22 +10,18 @@
 </template>
 
 <script setup lang="ts">
+import { onMounted, ref } from 'vue'
 import GroupsListTable from '@/components/GroupsListTable.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
 import ModalAddGroup from '@/components/modals/ModalAddGroup.vue'
+import type { Group } from '@/interfaces/group.interface'
 import { useModal } from 'vue-final-modal'
+import { useGroupStore } from '@/stores/group'
 
-const GROUPS = [
-  {
-    id: 1,
-    name: 'Группа 1',
-    totalUsers: 10,
-    totalTests: 5,
-    averageResultPercent: 86
-  }
-]
-
-const groups = GROUPS
+const groupStore = useGroupStore()
+const groups = ref<Group[] | null>(null)
+const isLoading = ref(false)
+const errorMessage = ref<string | null>(null)
 
 const { open, close } = useModal({
   component: ModalAddGroup,
@@ -40,8 +36,26 @@ const { open, close } = useModal({
   }
 })
 
+onMounted(async () => {
+  getAllGroups()
+})
+
 const openAddGroupModal = () => {
   open()
+}
+
+const getAllGroups = async () => {
+  isLoading.value = true
+  const res = await groupStore.getAllGroups()
+  if (res.status === 'success' && res.groups) {
+    groups.value = res?.groups
+    errorMessage.value = null
+  } else {
+    groups.value = null
+    errorMessage.value = 'Произошла ошибка при получении списка групп'
+  }
+
+  isLoading.value = false
 }
 const addGroup = (group: any) => {
   console.log(group)

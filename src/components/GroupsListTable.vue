@@ -18,7 +18,7 @@
           {{ group.totalTests }}
         </div>
         <div class="p-5 w-2/12 items-center text-left font-medium">
-          {{ group.averageResultPercent }}%
+          {{ group.averageResultPercent ? `${group.averageResultPercent}%` : '-' }}
         </div>
       </div>
     </div>
@@ -26,8 +26,10 @@
 </template>
 
 <script setup lang="ts">
+import type { Group } from '@/interfaces/group.interface'
+
 interface Props {
-  groups: any[]
+  groups: Group[] | null
 }
 
 const props = defineProps<Props>()

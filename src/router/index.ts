@@ -8,6 +8,8 @@ import TestsListView from '@/views/TestsListView.vue'
 import UsersListView from '@/views/UsersListView.vue'
 import TestEditorView from '@/views/TestEditorView.vue'
 import UserInfoView from '@/views/UserInfoView.vue'
+import UserTestsListView from '@/views/UserTestsListView.vue'
+import { UserRole } from '@/interfaces/user.interface'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -23,7 +25,12 @@ const router = createRouter({
     {
       path: '/tests',
       name: 'tests',
-      component: TestsListView,
+      component: () => {
+        if (localStorage.getItem('role') === 'ADMIN') {
+          return TestsListView
+        }
+        return UserTestsListView
+      },
       meta: {
         title: 'Тесты'
       }
@@ -87,7 +94,12 @@ const router = createRouter({
     {
       path: '/stats',
       name: 'stats',
-      component: StatsView,
+      component: () => {
+        if (localStorage.getItem('role') === 'ADMIN') {
+          return StatsView
+        }
+        return StatsView
+      },
       meta: {
         title: 'Статистика'
       }
