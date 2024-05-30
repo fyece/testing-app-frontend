@@ -35,7 +35,7 @@ import InputBase from './inputs/InputBase.vue'
 
 interface Props {
   question: {
-    title: string
+    text: string
     points: number
     answers: any[]
   }
@@ -53,7 +53,7 @@ const questionPoints = defineModel<string>('questionPoints', { default: '1' })
 const answers = ref<any[]>(props.question.answers)
 
 onMounted(() => {
-  questionTitle.value = question.value.title
+  questionTitle.value = question.value.text
   questionPoints.value = question.value.points
 })
 
@@ -82,7 +82,7 @@ const saveQuestion = () => {
   const newQuestion = { ...question.value }
   emit('update', props.index, {
     ...newQuestion,
-    title: questionTitle.value,
+    text: questionTitle.value,
     points: +questionPoints.value,
     answers: answers.value
   })

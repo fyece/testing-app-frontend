@@ -10,22 +10,24 @@
       <div v-for="test in props.tests" :key="test.id" class="flex border-b">
         <div class="p-5 w-6/12 items-center text-left font-medium text-blue-500">
           <RouterLink :to="{ name: 'test-info', params: { id: test.id } }">
-            {{ test.title }}
+            {{ test.name }}
           </RouterLink>
         </div>
-        <div class="p-5 w-2/12 items-center text-left font-medium">{{ test.users }}</div>
+        <div class="p-5 w-2/12 items-center text-left font-medium">{{ test.totalUsers }}</div>
         <div class="p-5 w-2/12 items-center text-left font-medium">
-          {{ test.averageResultPercent }}%
+          {{ `${test.averageResultPercent ? `${test.averageResultPercent}%` : '-'}` }}
         </div>
-        <div class="p-5 w-2/12 items-center text-left font-medium">{{ test.createdAt }}</div>
+        <div class="p-5 w-2/12 items-center text-left font-medium">{{ '21.05.2024' }}</div>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import type { Test } from '@/interfaces/test.interface'
+
 interface Props {
-  tests: any[]
+  tests: Test[] | null
 }
 
 const props = defineProps<Props>()

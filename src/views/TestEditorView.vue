@@ -2,7 +2,14 @@
   <SideMenuTemplate>
     <template #aside>
       <div class="flex items-center justify-between mb-4">
-        <ButtonBase size="xs" @click="addQuestion('single')">Добавить вопрос</ButtonBase>
+        <ButtonDropdown size="xs">
+          Добавить вопрос
+          <template #dropdown>
+            <ButtonDropdownItem @click="addQuestion('single')">Одиночный</ButtonDropdownItem>
+            <ButtonDropdownItem @click="addQuestion('multiple')">Множественный</ButtonDropdownItem>
+            <ButtonDropdownItem @click="addQuestion('text')">Текст</ButtonDropdownItem>
+          </template>
+        </ButtonDropdown>
         <ButtonBase size="xs" @click="saveTest()">Сохранить</ButtonBase>
       </div>
       <h5 class="text-md font-semibold mb-2 text-gray-600">Содержание</h5>
@@ -12,7 +19,7 @@
             Титульник</TestNavItem
           >
         </li>
-        <li v-for="(question, index) in questions" :key="question.title">
+        <li v-for="(question, index) in questions" :key="question.text">
           <TestNavItem
             :item="question"
             :isDeletable="true"
@@ -48,7 +55,7 @@
           getCurrentQuestion(currentQuestionIndex).type === 'multiple'
         "
         :index="currentQuestionIndex"
-        :key="getCurrentQuestion(currentQuestionIndex).title + currentQuestionIndex"
+        :key="getCurrentQuestion(currentQuestionIndex).text + currentQuestionIndex"
         :question="getCurrentQuestion(currentQuestionIndex)"
         @update="updateQuestion"
       />
@@ -59,7 +66,7 @@
         "
         :index="currentQuestionIndex"
         :key="
-          getCurrentQuestion(currentQuestionIndex).title +
+          getCurrentQuestion(currentQuestionIndex).text +
           getCurrentQuestion(currentQuestionIndex).type
         "
         :question="getCurrentQuestion(currentQuestionIndex)"
@@ -79,39 +86,20 @@ import SideMenuTemplate from '@/components/SideMenuTemplate.vue'
 import TestNavItem from '@/components/TestNavItem.vue'
 import TestTitlist from '@/components/TestTitlist.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
+import ButtonDropdown from '@/components/buttons/ButtonDropdown.vue'
+import ButtonDropdownItem from '@/components/buttons/ButtonDropdownItem.vue'
 import CreateQuestionText from '@/components/CreateQuestionText.vue'
+import { useTestsStore } from '@/stores/test'
+import router from '@/router'
 
-const testTitle = defineModel<string>('testTitle', { default: 'какое то название' })
-const testDescription = defineModel<string>('testDescription', { default: 'какое то описание' })
+const testStore = useTestsStore()
+
+const testTitle = defineModel<string>('testTitle', { default: '' })
+const testDescription = defineModel<string>('testDescription', { default: '' })
 
 const currentQuestionIndex = ref(-1)
 
-const questions = ref([
-  {
-    title: '',
-    points: 1,
-    type: 'single',
-    answers: []
-  },
-  {
-    title: '',
-    points: 1,
-    type: 'multiple',
-    answers: []
-  },
-  {
-    title: '',
-    points: 1,
-    type: 'multiple',
-    answers: []
-  },
-  {
-    title: '',
-    points: 1,
-    type: 'text',
-    answers: []
-  }
-])
+const questions = ref([])
 
 const getCurrentQuestion = (index: number) => {
   return questions.value[index]
@@ -124,7 +112,7 @@ const setCurrentQuestionIndex = (index: number) => {
 
 const addQuestion = (type: 'single' | 'multiple' | 'text' = 'single') => {
   const newQuestion = {
-    title: '',
+    text: '',
     type: type,
     points: 1,
     answers: []
@@ -145,14 +133,16 @@ const deleteQuestion = (indexToRemove: number) => {
   }
 }
 
-const saveTest = () => {
+const saveTest = async () => {
   const test = {
-    title: testTitle.value,
+    name: testTitle.value,
     description: testDescription.value,
     questions: JSON.parse(JSON.stringify(questions.value))
   }
-
-  console.log('TEST SAVED ', test)
+  const res = await testStore.createTest(test)
+  if (res.status === 'success') {
+    router.push({ name: 'tests' })
+  }
 }
 </script>
 

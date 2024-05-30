@@ -9,7 +9,7 @@
       <div v-for="user in props.users" :key="user.id" class="flex border-b">
         <div class="p-5 w-6/12 items-center text-left font-medium text-blue-500">
           <RouterLink :to="{ name: 'user-info', params: { id: user.id } }">
-            {{ user.fullName }}
+            {{ user.fullname }}
           </RouterLink>
         </div>
 
@@ -17,7 +17,7 @@
           {{ user.testsPassed }} из {{ user.testsTotal }}
         </div>
         <div class="p-5 w-3/12 items-center text-left font-medium">
-          {{ user.averageResultPercent }}%
+          {{ `${user.averageResultPercent ? `${user.averageResultPercent}%` : '-'}` }}
         </div>
       </div>
     </div>
@@ -25,8 +25,10 @@
 </template>
 
 <script setup lang="ts">
+import type { User } from '@/interfaces/user.interface'
+
 interface Props {
-  users: any[]
+  users: User[] | null
 }
 
 const props = defineProps<Props>()

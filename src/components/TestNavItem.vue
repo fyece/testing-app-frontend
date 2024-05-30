@@ -1,7 +1,10 @@
 <template>
   <div
-    class="flex gap-2 items-center px-4 py-4 w-full rounded-lg bg-white text-gray-700 font-medium cursor-pointer hover:bg-gray-100"
-    :class="{ 'bg-gray-300': isActive }"
+    class="flex gap-2 items-center px-4 py-4 w-full rounded-lg cursor-pointer hover:bg-gray-100"
+    :class="{
+      'bg-gray-200 font-semibold text-gray-700': isActive,
+      'bg-white font-medium': !isActive
+    }"
     @mouseenter="showDeleteButton"
     @mouseleave="hideDeleteButton"
   >

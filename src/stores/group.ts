@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import type { Group } from '@/interfaces/group.interface'
 import instance from '@/api/axios'
+import type { User } from '@/interfaces/user.interface'
 
 export const useGroupStore = defineStore('group', () => {
   async function getAllGroups() {
@@ -44,5 +45,20 @@ export const useGroupStore = defineStore('group', () => {
     }
   }
 
-  return { getAllGroups, searchGroups, getGroupById }
+  async function getGroupMembers(id: number) {
+    try {
+      const { data } = await instance.get(`groups/${id}/members`)
+      const users: User[] = data
+      return {
+        status: 'success',
+        users
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
+  return { getAllGroups, getGroupMembers, searchGroups, getGroupById }
 })

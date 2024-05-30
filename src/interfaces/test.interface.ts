@@ -1,14 +1,52 @@
 import type { Group } from './group.interface'
 import type { User } from './user.interface'
 
+export interface CreateTest {
+  name: string
+  description: string
+  questions: CreateQuestion[]
+}
+
+export interface CreateQuestion {
+  text: string
+  type: 'single' | 'multiple' | 'text'
+  points: number
+  answers: CreateAnswer[]
+}
+
+export interface CreateAnswer {
+  text: string
+  isCorrect: boolean
+}
+
 export interface Test {
   id: number
   name: String
   description: String
   ownerId: number
-  questions: Question[]
-  results: Result[]
-  userTests: UserTest[]
+  totalUsers: number
+  averageResultPercent: number | null
+  questions?: Question[]
+  results?: Result[]
+  userTests?: UserTest[]
+}
+
+export interface TestResult {
+  userId: number
+  testId: number
+  isDone: false
+  resultId: number | null
+  user: {
+    id: number
+    fullname: string
+    email: string
+    phoneNumber: string
+    jobTitle: string
+    role: string
+    groupId: number | null
+    group: Group | null
+  }
+  result: Result | null
 }
 
 export interface UserTest {

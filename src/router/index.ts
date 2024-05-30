@@ -3,13 +3,15 @@ import LoginView from '@/views/LoginView.vue'
 import StatsView from '@/views/StatsView.vue'
 import GroupInfoView from '@/views/GroupInfoView.vue'
 import GroupsListView from '@/views/GroupsListView.vue'
-import TestView from '@/views/TestView.vue'
 import TestsListView from '@/views/TestsListView.vue'
 import UsersListView from '@/views/UsersListView.vue'
 import TestEditorView from '@/views/TestEditorView.vue'
 import UserInfoView from '@/views/UserInfoView.vue'
 import UserTestsListView from '@/views/UserTestsListView.vue'
-import { UserRole } from '@/interfaces/user.interface'
+import TestInfoView from '@/views/TestInfoView.vue'
+import TestView from '@/views/TestView.vue'
+import StatsUserView from '@/views/StatsUserView.vue'
+import ResultsView from '@/views/ResultsView.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,7 +40,12 @@ const router = createRouter({
     {
       path: '/tests/:id',
       name: 'test-info',
-      component: TestEditorView,
+      component: () => {
+        if (localStorage.getItem('role') === 'ADMIN') {
+          return TestInfoView
+        }
+        return TestView
+      },
       meta: {
         title: 'Тест'
       }
@@ -51,14 +58,7 @@ const router = createRouter({
         title: 'Создание теста'
       }
     },
-    {
-      path: '/tests/:id',
-      name: 'test',
-      component: TestView,
-      meta: {
-        title: 'Тест'
-      }
-    },
+
     {
       path: '/users',
       name: 'users',
@@ -98,10 +98,18 @@ const router = createRouter({
         if (localStorage.getItem('role') === 'ADMIN') {
           return StatsView
         }
-        return StatsView
+        return StatsUserView
       },
       meta: {
         title: 'Статистика'
+      }
+    },
+    {
+      path: '/results',
+      name: 'results',
+      component: ResultsView,
+      meta: {
+        title: 'Результаты'
       }
     },
     {

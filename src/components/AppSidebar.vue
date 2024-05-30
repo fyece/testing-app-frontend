@@ -21,7 +21,7 @@
     <nav>
       <ul class="text-lg space-y-2 font-semibold text-gray-500">
         <li v-for="route in navRoutes" :key="route.path">
-          <RouterLink :to="route.path" class="text-md font-semibold" activeClass="text-gray-800">{{
+          <RouterLink :to="route.path" class="text-md font-semibold" active-class="text-gray-800">{{
             route.name
           }}</RouterLink>
         </li>

@@ -14,4 +14,7 @@ export interface User {
   password: string
   role: UserRole
   group: Group | null
+  testsPassed: number
+  testsTotal: number
+  averageResultPercent: number | null
 }

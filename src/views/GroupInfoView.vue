@@ -20,6 +20,7 @@ import SideMenuTemplate from '@/components/SideMenuTemplate.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
 import ModalAddMember from '@/components/modals/ModalAddMember.vue'
 import type { Group } from '@/interfaces/group.interface'
+import type { User } from '@/interfaces/user.interface'
 import { useGroupStore } from '@/stores/group'
 import { computed, onMounted, ref } from 'vue'
 import { useModal } from 'vue-final-modal'
@@ -48,35 +49,14 @@ const groupId = computed(() => Number(router.currentRoute.value.params.id) ?? nu
 const group = ref<Group | null>(null)
 const infoRows = ref<InfoRow[] | null>(null)
 
-const members = [
-  {
-    id: 1,
-    fullName: 'Иванов Иван Иванович',
-    averageResultPercent: 83,
-    testsPassed: 12,
-    testsTotal: 14
-  },
-  {
-    id: 2,
-    fullName: 'Петров Петр Петрович',
-    averageResultPercent: 83,
-    testsPassed: 12,
-    testsTotal: 14
-  },
-  {
-    id: 3,
-    fullName: 'Сидоров Сидор Сидорович',
-    averageResultPercent: 83,
-    testsPassed: 12,
-    testsTotal: 14
-  }
-]
+const members = ref<User[] | null>(null)
 
 const isLoading = ref(false)
 const errorMessage = ref<string | null>(null)
 
 onMounted(async () => {
   getGroupInfo()
+  getGroupMembers()
 })
 
 const getGroupInfo = async () => {
@@ -103,6 +83,19 @@ const getGroupInfo = async () => {
     group.value = null
     infoRows.value = null
   }
+}
+
+const getGroupMembers = async () => {
+  isLoading.value = true
+  const res = await groupStore.getGroupMembers(groupId.value)
+  if (res.status === 'success') {
+    errorMessage.value = null
+    members.value = res.users ?? null
+  } else {
+    errorMessage.value = 'Произошла ошибка при получении информации о группе'
+    group.value = null
+  }
+  isLoading.value = false
 }
 
 isLoading.value = false
