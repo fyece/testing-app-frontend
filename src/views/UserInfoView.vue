@@ -54,7 +54,7 @@ const getUserInfo = async () => {
     infoRows.value = [
       {
         title: 'Группа',
-        value: res.user.group?.name ?? ''
+        value: res.user.group?.name ?? '-'
       },
       {
         title: 'Email',

@@ -18,3 +18,11 @@ export interface User {
   testsTotal: number
   averageResultPercent: number | null
 }
+
+export interface CreateUserDto {
+  fullname: string
+  email: string
+  phoneNumber?: string
+  jobTitle?: string
+  password: string
+}

@@ -7,3 +7,8 @@ export interface Group {
   totalTests: number
   averageResultPercent: number | null
 }
+
+export interface CreateGroupDto {
+  name: string
+  description?: string
+}

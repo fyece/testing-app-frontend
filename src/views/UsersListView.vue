@@ -10,15 +10,15 @@
 </template>
 
 <script setup lang="ts">
-import UsersListTableCopy from '@/components/UsersListTable copy.vue'
+import UsersListTableCopy from '@/components/UsersListTable.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
 import ModalAddUser from '@/components/modals/ModalAddUser.vue'
-import type { User } from '@/interfaces/user.interface'
+import type { User, CreateUserDto } from '@/interfaces/user.interface'
 import { useUserStore } from '@/stores/user'
 import { onMounted, ref } from 'vue'
 import { useModal } from 'vue-final-modal'
 
-const user = useUserStore()
+const userStore = useUserStore()
 
 const users = ref<User[] | null>(null)
 const isLoading = ref(false)
@@ -27,7 +27,7 @@ const errorMessage = ref<string | null>(null)
 const { open, close } = useModal({
   component: ModalAddUser,
   attrs: {
-    onConfirm(newUser: any) {
+    onConfirm(newUser: CreateUserDto) {
       close()
       addUser(newUser)
     }
@@ -43,7 +43,7 @@ onMounted(() => {
 
 const getUsers = async () => {
   isLoading.value = true
-  const res = await user.getAllUsers()
+  const res = await userStore.getAllUsers()
   if (res.status === 'success') {
     errorMessage.value = null
     users.value = res.users ?? null
@@ -59,9 +59,14 @@ const openAddUserModal = () => {
   open()
 }
 
-const addUser = (user: any) => {
-  console.log(user)
-  // TODO: userStore.createUser()
+const addUser = async (user: any) => {
+  const res = await userStore.createUser(user)
+  if (res.status === 'success') {
+    errorMessage.value = null
+    await getUsers()
+  } else {
+    errorMessage.value = 'Произошла ошибка при добавлении пользователя'
+  }
 }
 </script>
 

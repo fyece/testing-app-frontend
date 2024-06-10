@@ -1,6 +1,6 @@
 import instance from '@/api/axios'
 import type { Test, UserTest } from '@/interfaces/test.interface'
-import type { User } from '@/interfaces/user.interface'
+import type { CreateUserDto, User } from '@/interfaces/user.interface'
 import { defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
@@ -49,9 +49,24 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const createUser = async (user: CreateUserDto) => {
+    try {
+      const { data } = await instance.post('users', user)
+      return {
+        status: 'success',
+        user: data
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
   return {
     getAllUsers,
     getUserById,
-    getAllUserTests
+    getAllUserTests,
+    createUser
   }
 })

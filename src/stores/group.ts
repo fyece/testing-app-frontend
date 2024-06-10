@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
-import type { Group } from '@/interfaces/group.interface'
+import type { CreateGroupDto, Group } from '@/interfaces/group.interface'
 import instance from '@/api/axios'
 import type { User } from '@/interfaces/user.interface'
 
@@ -60,5 +60,19 @@ export const useGroupStore = defineStore('group', () => {
     }
   }
 
-  return { getAllGroups, getGroupMembers, searchGroups, getGroupById }
+  async function createGroup(group: CreateGroupDto) {
+    try {
+      const { data } = await instance.post('groups', group)
+      return {
+        status: 'success',
+        group: data
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
+  return { getAllGroups, getGroupMembers, searchGroups, getGroupById, createGroup }
 })

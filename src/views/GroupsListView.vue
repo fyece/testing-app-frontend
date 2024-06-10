@@ -14,7 +14,7 @@ import { onMounted, ref } from 'vue'
 import GroupsListTable from '@/components/GroupsListTable.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
 import ModalAddGroup from '@/components/modals/ModalAddGroup.vue'
-import type { Group } from '@/interfaces/group.interface'
+import type { CreateGroupDto, Group } from '@/interfaces/group.interface'
 import { useModal } from 'vue-final-modal'
 import { useGroupStore } from '@/stores/group'
 
@@ -26,7 +26,7 @@ const errorMessage = ref<string | null>(null)
 const { open, close } = useModal({
   component: ModalAddGroup,
   attrs: {
-    onConfirm(newGroup: any) {
+    onConfirm(newGroup: CreateGroupDto) {
       close()
       addGroup(newGroup)
     }
@@ -57,9 +57,12 @@ const getAllGroups = async () => {
 
   isLoading.value = false
 }
-const addGroup = (group: any) => {
-  console.log(group)
-  // TODO groupService.addGroup(group)
+const addGroup = async (group: CreateGroupDto) => {
+  const res = await groupStore.createGroup(group)
+
+  if (res.status === 'success') {
+    await getAllGroups()
+  }
 }
 </script>
 

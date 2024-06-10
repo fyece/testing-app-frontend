@@ -2,12 +2,12 @@
 import { VueFinalModal } from 'vue-final-modal'
 import InputBase from '../inputs/InputBase.vue'
 import ButtonBase from '../buttons/ButtonBase.vue'
+import type { CreateUserDto } from '@/interfaces/user.interface'
 
 const fullname = defineModel<string>('fullname')
 const email = defineModel<string>('email')
 const phoneNumber = defineModel<string>('phoneNumber')
 const jobTitle = defineModel<string>('jobTitle')
-const username = defineModel<string>('username')
 const password = defineModel<string>('password')
 
 const emit = defineEmits(['confirm'])
@@ -18,9 +18,8 @@ const addUser = () => {
     email: email.value,
     phoneNumber: phoneNumber.value,
     jobTitle: jobTitle.value,
-    username: username.value,
     password: password.value
-  }
+  } as CreateUserDto
   emit('confirm', user)
 }
 </script>
@@ -39,7 +38,6 @@ const addUser = () => {
       <InputBase label="Должность" name="jobTitle" v-model="jobTitle" />
       <InputBase label="Почта" name="email" v-model="email" />
       <InputBase label="Номер телефона" name="phoneNumber" v-model="phoneNumber" />
-      <InputBase label="Логин" name="username" v-model="username" />
       <InputBase label="Пароль" name="password" v-model="password" />
     </div>
     <ButtonBase width="full" size="md" @click="addUser">Добавить</ButtonBase>
