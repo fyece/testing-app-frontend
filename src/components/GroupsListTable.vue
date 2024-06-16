@@ -18,7 +18,7 @@
           {{ group.totalTests }}
         </div>
         <div class="p-5 w-2/12 items-center text-left font-medium">
-          {{ group.averageResultPercent ? `${group.averageResultPercent}%` : '-' }}
+          {{ group.averageResultPercent ? `${group.averageResultPercent.toFixed(0)}%` : '-' }}
         </div>
       </div>
     </div>

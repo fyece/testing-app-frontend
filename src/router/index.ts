@@ -105,7 +105,7 @@ const router = createRouter({
       }
     },
     {
-      path: '/results',
+      path: '/results/:id',
       name: 'results',
       component: ResultsView,
       meta: {

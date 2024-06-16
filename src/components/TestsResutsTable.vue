@@ -6,14 +6,14 @@
       class="flex items-center justify-between border-b"
     >
       <div class="p-3 w-8/12 items-center text-left text-lg font-medium text-blue-500">
-        <RouterLink :to="{ name: 'test-info', params: { id: test.id } }">
+        <RouterLink :to="{ name: test.isDone ? 'results' : 'test-info', params: { id: test.id } }">
           {{ test.name }}
         </RouterLink>
       </div>
       <div class="p-3 w-4/12 items-center text-right font-medium">
         {{
           test.isDone && test.result
-            ? `Пройдено на ${test.result?.score / test.result?.totalScore}%`
+            ? `Пройдено на ${((test.result?.score / test.result?.totalScore) * 100).toFixed(0)}%`
             : 'Не пройдено'
         }}
       </div>

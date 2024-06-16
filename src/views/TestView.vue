@@ -2,7 +2,9 @@
 import SideMenuTemplate from '@/components/SideMenuTemplate.vue'
 import TestNavItem from '@/components/TestNavItem.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
+import TestQuestionMultiple from '@/components/test-questions/TestQuestionMultiple.vue'
 import TestQuestionSingle from '@/components/test-questions/TestQuestionSingle.vue'
+import TestQuestionText from '@/components/test-questions/TestQuestionText.vue'
 import type { Test } from '@/interfaces/test.interface'
 import { useTestsStore } from '@/stores/test'
 import { computed, onMounted, ref } from 'vue'
@@ -10,13 +12,13 @@ import { useRouter } from 'vue-router'
 
 interface SubmitTestDto {
   testId: number
-  answers: SubmitAnswer[]
+  answers: UserAnswer[]
 }
 
-interface SubmitAnswer {
+interface UserAnswer {
   questionId: number
   answerIds?: number[] | null
-  textAswer?: string | null
+  textAnswer?: string | null
 }
 
 const router = useRouter()
@@ -54,21 +56,47 @@ const getTest = async () => {
 }
 
 function setCurrentQuestionIndex(index: number) {
-  console.log(`set ${index}`, `current ${currentQuestionIndex.value}`)
+  // console.log(`set ${index}`, `current ${currentQuestionIndex.value}`)
   currentQuestionIndex.value = index
-  console.log(`id ${index}`, `now current ${currentQuestionIndex.value}`)
+  // console.log(`id ${index}`, `now current ${currentQuestionIndex.value}`)
+}
+
+function setAnswer(userAnswer: UserAnswer) {
+  let newUserAnswers = []
+  if (userAnswers.value.answers.find((answer) => answer.questionId === userAnswer.questionId)) {
+    newUserAnswers = userAnswers.value.answers.map((answer) => {
+      if (answer.questionId === userAnswer.questionId) {
+        return userAnswer
+      }
+      return answer
+    })
+  } else {
+    newUserAnswers = [...userAnswers.value.answers, userAnswer]
+  }
+  userAnswers.value = {
+    ...userAnswers.value,
+    answers: newUserAnswers
+  }
+  console.log('test: ', JSON.parse(JSON.stringify(userAnswers.value)))
+}
+function next() {
+  if (currentQuestionIndex.value < lastQuestionIndex.value) {
+    currentQuestionIndex.value++
+  } else {
+    submitTest()
+  }
 }
 
 async function submitTest() {
-  console.log(userAnswers)
-  // if (userAnswers.value) {
-  //   const res = await testStore.submitTest(userAnswers.value)
-  //   if (res.status === 'success') {
-  //     router.push({ name: 'home' })
-  //   } else {
-  //     errorMessage.value = 'Произошла ошибка при отправке теста'
-  //   }
-  // }
+  console.log(JSON.parse(JSON.stringify(userAnswers.value)))
+  if (userAnswers.value) {
+    const res = await testStore.submitTest(userAnswers.value)
+    if (res.status === 'success') {
+      router.push('/results/' + testId.value)
+    } else {
+      errorMessage.value = 'Произошла ошибка при отправке теста'
+    }
+  }
 }
 </script>
 
@@ -92,7 +120,36 @@ async function submitTest() {
     <template #main>
       <div v-if="currentQuestionIndex === -1">Начальная страница</div>
 
-      <TestQuestionSingle v-if="currentQuestion?.type === 'single'" :question="currentQuestion" />
+      <TestQuestionSingle
+        v-if="currentQuestion?.type === 'single'"
+        :question="currentQuestion"
+        :isLast="currentQuestionIndex === lastQuestionIndex"
+        :answer="
+          userAnswers?.answers?.find((answer) => answer.questionId === currentQuestion?.id) ?? null
+        "
+        @setAnswer="setAnswer"
+        @next="next"
+      />
+      <TestQuestionMultiple
+        v-if="currentQuestion?.type === 'multiple'"
+        :question="currentQuestion"
+        :isLast="currentQuestionIndex === lastQuestionIndex"
+        :answer="
+          userAnswers?.answers?.find((answer) => answer.questionId === currentQuestion?.id) ?? null
+        "
+        @setAnswer="setAnswer"
+        @next="next"
+      />
+      <TestQuestionText
+        v-if="currentQuestion?.type === 'text'"
+        :question="currentQuestion"
+        :isLast="currentQuestionIndex === lastQuestionIndex"
+        :answer="
+          userAnswers?.answers?.find((answer) => answer.questionId === currentQuestion?.id) ?? null
+        "
+        @setAnswer="setAnswer"
+        @next="next"
+      />
     </template>
   </SideMenuTemplate>
 </template>

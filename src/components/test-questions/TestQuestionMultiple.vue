@@ -9,10 +9,10 @@
       >
         <input
           class="w-6 h-6 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
-          type="radio"
+          type="checkbox"
           :id="`answer-${answer.id}`"
           :value="answer.id"
-          v-model="selectedAnswerId"
+          v-model="selectedAnswerIds"
         />
         <label :for="`answer-${answer.id}`">{{ answer.text }}</label>
       </div>
@@ -37,17 +37,17 @@ interface Props {
 
 const props = defineProps<Props>()
 const emit = defineEmits(['setAnswer', 'next'])
-const selectedAnswerId = ref<number | null>(props.answer?.answerIds?.[0] ?? null)
+const selectedAnswerIds = ref<number[] | null>(props.answer?.answerIds ?? [])
 
 function next() {
   emit('next')
 }
 
-watch(selectedAnswerId, (newAnswer) => {
+watch(selectedAnswerIds, (newAnswer) => {
   if (newAnswer !== null) {
     emit('setAnswer', {
       questionId: props.question.id,
-      answerIds: [newAnswer]
+      answerIds: [...newAnswer]
     })
   }
 })

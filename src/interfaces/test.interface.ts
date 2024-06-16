@@ -59,6 +59,15 @@ export interface UserTest {
   result: Result | null
 }
 
+export interface UserTestDto {
+  testId: number
+  answers: {
+    questionId: number
+    answerIds?: number[] | null | undefined
+    textAnswer?: string | null | undefined
+  }[]
+}
+
 export interface Question {
   id: number
   text: string

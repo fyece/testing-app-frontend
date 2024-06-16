@@ -26,3 +26,9 @@ export interface CreateUserDto {
   jobTitle?: string
   password: string
 }
+
+export interface UserStats {
+  testsPassed: number
+  testsTotal: number
+  averageResultPercent: number
+}

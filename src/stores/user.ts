@@ -63,10 +63,25 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  const getUserStats = async () => {
+    try {
+      const { data } = await instance.get(`users/stats`)
+      return {
+        status: 'success',
+        stats: data
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
   return {
     getAllUsers,
     getUserById,
     getAllUserTests,
-    createUser
+    createUser,
+    getUserStats
   }
 })

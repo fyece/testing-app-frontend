@@ -17,7 +17,7 @@
           {{ user.testsPassed }} из {{ user.testsTotal }}
         </div>
         <div class="p-5 w-3/12 items-center text-left font-medium">
-          {{ `${user.averageResultPercent ? `${user.averageResultPercent}%` : '-'}` }}
+          {{ `${user.averageResultPercent?.toFixed(0) ? `${user.averageResultPercent}%` : '-'}` }}
         </div>
       </div>
     </div>

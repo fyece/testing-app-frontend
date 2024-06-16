@@ -74,7 +74,7 @@ const getGroupInfo = async () => {
       {
         title: 'Средний результат',
         value: res.group.averageResultPercent
-          ? res.group.averageResultPercent.toString() + '%'
+          ? res.group.averageResultPercent.toFixed(0).toString() + '%'
           : '-'
       }
     ]

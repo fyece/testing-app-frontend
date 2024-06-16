@@ -15,7 +15,7 @@
         </div>
         <div class="p-5 w-2/12 items-center text-left font-medium">{{ test.totalUsers }}</div>
         <div class="p-5 w-2/12 items-center text-left font-medium">
-          {{ `${test.averageResultPercent ? `${test.averageResultPercent}%` : '-'}` }}
+          {{ `${test.averageResultPercent ? `${test.averageResultPercent.toFixed(0)}%` : '-'}` }}
         </div>
         <div class="p-5 w-2/12 items-center text-left font-medium">{{ '21.05.2024' }}</div>
       </div>

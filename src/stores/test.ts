@@ -1,6 +1,12 @@
 import { defineStore } from 'pinia'
 import instance from '@/api/axios'
-import type { CreateTest, Test, TestResult, UserTest } from '@/interfaces/test.interface'
+import type {
+  CreateTest,
+  Test,
+  TestResult,
+  UserTest,
+  UserTestDto
+} from '@/interfaces/test.interface'
 
 export const useTestsStore = defineStore('test', () => {
   async function getAllUserTests() {
@@ -83,5 +89,26 @@ export const useTestsStore = defineStore('test', () => {
     }
   }
 
-  return { getAllTests, getTestById, getAllUserTests, createTest, getAllTestResultsByTestId }
+  async function submitTest(userTestDto: UserTestDto) {
+    try {
+      const { data } = await instance.post('tests/submit', userTestDto)
+      return {
+        status: 'success',
+        test: data
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
+  return {
+    getAllTests,
+    getTestById,
+    getAllUserTests,
+    createTest,
+    getAllTestResultsByTestId,
+    submitTest
+  }
 })
