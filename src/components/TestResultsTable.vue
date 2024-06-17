@@ -24,8 +24,7 @@
         <div class="p-5 w-2/12 items-center text-left font-medium">
           {{
             result.result?.score && result.result?.totalScore
-              ? (Math.round(result.result?.score / result.result?.totalScore) * 100).toFixed(0) +
-                '%'
+              ? ((result.result?.score / result.result?.totalScore) * 100).toFixed(0) + '%'
               : '-'
           }}
         </div>

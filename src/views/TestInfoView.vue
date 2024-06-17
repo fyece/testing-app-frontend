@@ -5,7 +5,10 @@
       <p class="font-medium text-gray-500 mb-4">{{ test?.description }}</p>
       <div class="flex gap-4 mb-4">
         <StatCard :value="test?.questions?.length" title="Вопросов" />
-        <StatCard :value="'74%'" title="Средний результат" />
+        <StatCard
+          :value="averageTestResult ? `${averageTestResult}%` : '-'"
+          title="Средний результат"
+        />
       </div>
     </section>
     <h2 class="text-2xl mb-5 font-semibold">Результаты</h2>
@@ -41,6 +44,21 @@ const testResults = ref<TestResult[] | null>(null)
 const test = ref<Test | null>(null)
 const isLoading = ref(false)
 const errorMessage = ref<string | null>(null)
+const averageTestResult = computed(() => {
+  if (testResults.value) {
+    const sum = testResults.value
+      .filter((result) => result.isDone)
+      .reduce((sum, result) => {
+        if (result.result?.score && result.result?.totalScore) {
+          return sum + result.result.score / result.result.totalScore
+        }
+
+        return sum
+      }, 0)
+    return ((sum / testResults.value.filter((result) => result.isDone).length) * 100).toFixed(0)
+  }
+  return null
+})
 
 const { open, close } = useModal({
   component: ModalAddToTest,
