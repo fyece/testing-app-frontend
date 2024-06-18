@@ -6,7 +6,7 @@
       <div class="flex gap-4 mb-4">
         <StatCard :value="test?.questions?.length" title="Вопросов" />
         <StatCard
-          :value="averageTestResult ? `${averageTestResult}%` : '-'"
+          :value="Number(averageTestResult) ? `${averageTestResult}%` : '-'"
           title="Средний результат"
         />
       </div>
@@ -63,9 +63,9 @@ const averageTestResult = computed(() => {
 const { open, close } = useModal({
   component: ModalAddToTest,
   attrs: {
-    onConfirm(newUser: any) {
+    onConfirm(newUsers: User[]) {
       close()
-      addUser(newUser)
+      addUser(newUsers)
     }
   },
   slots: {
@@ -104,13 +104,15 @@ const getTestInfo = async () => {
   }
 }
 
-const openAddUserModal = () => {
+const openAddUserModal = async () => {
+  await getTestUsers()
   open()
 }
 
-const addUser = (user: any) => {
-  console.log(user)
-  // TODO: userStore.createUser()
+const addUser = async (users: User[]) => {
+  const newUsersIds = users.map((user) => user.id)
+  console.log(newUsersIds)
+  await testStore.addUsersToTest(testId.value, newUsersIds).then(() => getTestUsers())
 }
 </script>
 

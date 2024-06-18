@@ -2,58 +2,46 @@
 import { VueFinalModal } from 'vue-final-modal'
 import ButtonBase from '../buttons/ButtonBase.vue'
 import SearchWithSelect from '../inputs/SearchWithSelect.vue'
-import { ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import ButtonClose from '../buttons/ButtonClose.vue'
+import { useUserStore } from '@/stores/user'
+import type { User } from '@/interfaces/user.interface'
+import { useTestsStore } from '@/stores/test'
 
-const USERS = [
-  {
-    fullname: 'Реков Станислав Березович',
-    jobTitle: 'Колл-центр'
-  },
-  {
-    fullname: 'Бирюков Федор Верзилович',
-    jobTitle: 'Колл-центр'
-  },
-  {
-    fullname: 'Стомесов Виталий Федорович',
-    jobTitle: 'Менеджер по продажам'
-  },
-  {
-    fullname: 'Ильина Ясмина Робертовна',
-    jobTitle: 'Менеджер по продажам'
-  },
-  {
-    fullname: 'Дорофеев Роберт Владимирович',
-    jobTitle: 'Менеджер'
-  },
-  {
-    fullname: 'Сидоров Матвей Борисович',
-    jobTitle: 'Менеджер'
-  },
-  {
-    fullname: 'Дроздов Никита Матвеевич',
-    jobTitle: 'Менеджер'
-  },
-  {
-    fullname: 'Алексеев Алексей Сашкин',
-    jobTitle: 'Менеджер'
-  }
-]
+const userStore = useUserStore()
+const testStore = useTestsStore()
+const results = computed(() => testStore.currentResults)
 
 const search = defineModel<string>('search', { default: '' })
 const members = ref<Set<any>>(new Set())
-const options = ref<any[]>([])
+const options = ref<any>([])
+const users = ref<User[]>([])
 const emit = defineEmits(['confirm'])
 
+onMounted(async () => {
+  await getUsers()
+})
+
 const searchUsers = (searchString: string) => {
-  options.value = USERS.filter((user) =>
-    user.fullname.toLocaleLowerCase().includes(searchString.toLocaleLowerCase())
-  )
+  options.value = users.value.filter((user) => {
+    return (
+      user.fullname.toLocaleLowerCase().includes(searchString.toLocaleLowerCase()) &&
+      !members.value.has(user) &&
+      !results.value?.some((result) => result.userId === user.id)
+    )
+  })
 }
 
 const selectUser = (option: any) => {
   members.value.add(option)
   search.value = ''
+}
+
+const getUsers = async () => {
+  const res = await userStore.getAllUsers()
+  if (res.status === 'success') {
+    users.value = res.users ?? []
+  }
 }
 
 const addMembers = () => {

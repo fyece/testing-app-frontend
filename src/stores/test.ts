@@ -7,8 +7,10 @@ import type {
   UserTest,
   UserTestDto
 } from '@/interfaces/test.interface'
+import { ref } from 'vue'
 
 export const useTestsStore = defineStore('test', () => {
+  const currentResults = ref<TestResult[] | null>(null)
   async function getAllUserTests() {
     try {
       const { data } = await instance.get('tests/user')
@@ -64,6 +66,7 @@ export const useTestsStore = defineStore('test', () => {
     try {
       const { data } = await instance.get(`tests/${id}/results`)
       const results: TestResult[] = data
+      currentResults.value = results
       return {
         status: 'success',
         results
@@ -103,12 +106,43 @@ export const useTestsStore = defineStore('test', () => {
     }
   }
 
+  async function addGroupsToTest(testId: number, groupsIds: number[]) {
+    try {
+      const { data } = await instance.post(`tests/${testId}/users`, { usersId: usersIds })
+      return {
+        status: 'success',
+        test: data
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
+  async function addUsersToTest(testId: number, groupsId: number[]) {
+    try {
+      const { data } = await instance.post(`tests/${testId}/groups`, { groupsId: groupsId })
+      return {
+        status: 'success',
+        test: data
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
   return {
+    currentResults,
     getAllTests,
     getTestById,
     getAllUserTests,
     createTest,
     getAllTestResultsByTestId,
-    submitTest
+    submitTest,
+    addUsersToTest,
+    addGroupsToTest
   }
 })
