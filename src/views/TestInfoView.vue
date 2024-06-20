@@ -14,16 +14,17 @@
     <h2 class="text-2xl mb-5 font-semibold">Результаты</h2>
     <div class="flex items-center justify-between mb-3">
       <p class="font-medium">Всего назначено: {{ testResults?.length ?? 0 }} пользователей</p>
-      <ButtonBase @click="openAddUserModal">Назначить пользователя</ButtonBase>
+      <div class="flex gap-4 items-center">
+        <ButtonBase @click="openAddGroupModal">Назначить группы</ButtonBase>
+        <ButtonBase @click="openAddUserModal">Назначить пользователей</ButtonBase>
+      </div>
     </div>
     <TestResultsTable :results="testResults" />
   </section>
 </template>
 
 <script setup lang="ts">
-import UsersListTableCopy from '@/components/UsersListTable copy.vue'
 import ButtonBase from '@/components/buttons/ButtonBase.vue'
-import ModalAddUser from '@/components/modals/ModalAddUser.vue'
 import StatCard from '@/components/StatCard.vue'
 import type { User } from '@/interfaces/user.interface'
 import { useTestsStore } from '@/stores/test'
@@ -34,6 +35,8 @@ import type { Test, TestResult } from '@/interfaces/test.interface'
 import { useRoute } from 'vue-router'
 import TestResultsTable from '@/components/TestResultsTable.vue'
 import ModalAddToTest from '@/components/modals/ModalAddToTest.vue'
+import type { Group } from '@/interfaces/group.interface'
+import ModalAddGroupsToTest from '@/components/modals/ModalAddGroupsToTest.vue'
 
 const route = useRoute()
 const userStore = useUserStore()
@@ -60,12 +63,25 @@ const averageTestResult = computed(() => {
   return null
 })
 
-const { open, close } = useModal({
+const { open: openAddUser, close: closeAddUser } = useModal({
   component: ModalAddToTest,
   attrs: {
     onConfirm(newUsers: User[]) {
-      close()
+      closeAddUser()
       addUser(newUsers)
+    }
+  },
+  slots: {
+    default: ''
+  }
+})
+
+const { open: openAddGroup, close: closeAddGroup } = useModal({
+  component: ModalAddGroupsToTest,
+  attrs: {
+    onConfirm(newGroups: Group[]) {
+      closeAddGroup()
+      addGroups(newGroups)
     }
   },
   slots: {
@@ -105,14 +121,23 @@ const getTestInfo = async () => {
 }
 
 const openAddUserModal = async () => {
-  await getTestUsers()
-  open()
+  // await getTestUsers()
+  openAddUser()
+}
+
+const openAddGroupModal = async () => {
+  openAddGroup()
 }
 
 const addUser = async (users: User[]) => {
   const newUsersIds = users.map((user) => user.id)
   console.log(newUsersIds)
   await testStore.addUsersToTest(testId.value, newUsersIds).then(() => getTestUsers())
+}
+
+const addGroups = async (groups: Group[]) => {
+  const newGroupsIds = groups.map((group) => group.id)
+  await testStore.addGroupsToTest(testId.value, newGroupsIds).then(() => getTestUsers())
 }
 </script>
 

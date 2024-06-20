@@ -106,7 +106,7 @@ export const useTestsStore = defineStore('test', () => {
     }
   }
 
-  async function addGroupsToTest(testId: number, groupsIds: number[]) {
+  async function addUsersToTest(testId: number, usersIds: number[]) {
     try {
       const { data } = await instance.post(`tests/${testId}/users`, { usersId: usersIds })
       return {
@@ -120,7 +120,7 @@ export const useTestsStore = defineStore('test', () => {
     }
   }
 
-  async function addUsersToTest(testId: number, groupsId: number[]) {
+  async function addGroupsToTest(testId: number, groupsId: number[]) {
     try {
       const { data } = await instance.post(`tests/${testId}/groups`, { groupsId: groupsId })
       return {
