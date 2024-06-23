@@ -78,6 +78,22 @@ export const useTestsStore = defineStore('test', () => {
     }
   }
 
+  async function getAllTestsResults() {
+    try {
+      const { data } = await instance.get(`tests/results`)
+      const results: TestResult[] = data
+      currentResults.value = results
+      return {
+        status: 'success',
+        results
+      }
+    } catch (error) {
+      return {
+        status: 'failed'
+      }
+    }
+  }
+
   async function createTest(testData: CreateTest) {
     try {
       const { data } = await instance.post('tests', testData)
@@ -140,6 +156,7 @@ export const useTestsStore = defineStore('test', () => {
     getTestById,
     getAllUserTests,
     createTest,
+    getAllTestsResults,
     getAllTestResultsByTestId,
     submitTest,
     addUsersToTest,

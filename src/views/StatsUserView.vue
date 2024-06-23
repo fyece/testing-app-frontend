@@ -29,7 +29,7 @@ async function getUserStats() {
 </script>
 
 <template>
-  <section class="p-4 flex flex-col h-full rounded-xl bg-white">
+  <section class="p-8 flex flex-col h-full rounded-xl bg-white">
     <h2 class="text-4xl mb-5 font-semibold">Cтатистика</h2>
     <div class="flex items-center gap-8">
       <StatCard :value="stats?.testsPassed ? stats?.testsPassed : 0" title="Пройдено тестов" />

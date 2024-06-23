@@ -17,7 +17,9 @@
         <div class="p-5 w-2/12 items-center text-left font-medium">
           {{ `${test.averageResultPercent ? `${test.averageResultPercent.toFixed(0)}%` : '-'}` }}
         </div>
-        <div class="p-5 w-2/12 items-center text-left font-medium">{{ '21.05.2024' }}</div>
+        <div class="p-5 w-2/12 items-center text-left font-medium">
+          {{ formatDate(test.createdAt) }}
+        </div>
       </div>
     </div>
   </div>
@@ -25,6 +27,7 @@
 
 <script setup lang="ts">
 import type { Test } from '@/interfaces/test.interface'
+import { formatDate } from '@/utils'
 
 interface Props {
   tests: Test[] | null

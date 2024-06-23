@@ -1,5 +1,5 @@
 <template>
-  <section class="p-4 flex flex-col h-full rounded-xl bg-white">
+  <section class="p-8 flex flex-col h-full rounded-xl bg-white">
     <h2 class="text-4xl mb-5 font-semibold">Пользователи</h2>
     <div class="flex items-center justify-between mb-3">
       <p class="font-medium">Всего: {{ users?.length ?? 0 }} пользователей</p>

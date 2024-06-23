@@ -1,61 +1,88 @@
 <script setup lang="ts">
-import SearchWithSelect from '@/components/inputs/SearchWithSelect.vue'
-import SelectOptions from '@/components/inputs/SelectOptions.vue'
+import RaitingGroupTable from '@/components/RaitingGroupTable.vue'
+import RaitingUserTable from '@/components/RaitingUserTable.vue'
+import StatCard from '@/components/StatCard.vue'
+import type { Group } from '@/interfaces/group.interface'
+import type { TestResult } from '@/interfaces/test.interface'
+import type { User } from '@/interfaces/user.interface'
 import { useGroupStore } from '@/stores/group'
-import { ref } from 'vue'
+import { useTestsStore } from '@/stores/test'
+import { useUserStore } from '@/stores/user'
+import { computed, onMounted, ref } from 'vue'
 
 const groupStore = useGroupStore()
+const userStore = useUserStore()
+const testStore = useTestsStore()
 
-const period = defineModel<string>('period', { default: 'all' })
-const group = defineModel<string>('string', { default: '' })
-const user = defineModel<string>('user', { default: '' })
+const groups = ref<Group[] | null>(null)
+const users = ref<User[] | null>(null)
+const usersTests = ref<TestResult[] | null>(null)
 
-const groupOptions = ref<any[] | null>(null)
-const userOptions = ref<any[] | null>(null)
-
-const updateFilters = () => {
-  const filters = {
-    period: period.value
+const testsPassed = computed(() => {
+  if (usersTests.value) {
+    return usersTests.value?.filter((test) => test.isDone).length
   }
-  console.log(filters)
+  return 0
+})
+
+const testsTotal = computed(() => {
+  if (usersTests.value) {
+    return usersTests.value?.length
+  }
+  return 0
+})
+
+const averageResultPercent = computed(() => {
+  const results = usersTests.value?.map((test) => test.result) ?? []
+  const resultsScore = results.reduce((sum, result) => sum + (result?.score ?? 0), 0)
+  const resultsTotalScore = results.reduce((sum, result) => sum + (result?.totalScore ?? 0), 0)
+  if (results.length) {
+    return Number(((resultsScore / resultsTotalScore) * 100).toFixed(0))
+  }
+  return 0
+})
+
+onMounted(async () => {
+  getUsersTests()
+  getGroups()
+  getUsers()
+})
+
+const getUsersTests = async () => {
+  const res = await testStore.getAllTestsResults()
+  if (res.status === 'success') {
+    usersTests.value = res.results ?? []
+  }
 }
 
-const searchGroups = async () => {
-  groupOptions.value = await groupStore.searchGroups(group.value)
+const getGroups = async () => {
+  const res = await groupStore.getAllGroups()
+  if (res.status === 'success') {
+    groups.value = res.groups ?? []
+  }
 }
-const selectGroup = (group: any) => {}
+
+const getUsers = async () => {
+  const res = await userStore.getAllUsers()
+  if (res.status === 'success') {
+    users.value = res.users ?? []
+  }
+}
 </script>
 
 <template>
-  <section class="p-4 flex flex-col h-full rounded-xl bg-white">
+  <section class="p-8 flex flex-col h-full rounded-xl bg-white">
     <h2 class="text-4xl mb-5 font-semibold">Cтатистика</h2>
-    <div class="flex items-center gap-8">
-      <div class="w-48">
-        <SelectOptions v-model="period" name="period" @change="updateFilters">
-          <option value="all" selected>Все время</option>
-          <option value="day">За сегодня</option>
-          <option value="week">За неделю</option>
-        </SelectOptions>
-      </div>
-      <div class="w-56">
-        <SearchWithSelect
-          v-model="group"
-          placeholder="Выберите группу"
-          name="search"
-          :showOptions="!!groupOptions"
-          @search="searchGroups"
-        >
-          <li
-            class="py-2 px-2 cursor-pointer hover:bg-gray-100"
-            v-for="option in groupOptions"
-            :key="option"
-            @click="selectGroup(option)"
-          >
-            <p class="text-gray-900">{{ option.fullname }}</p>
-            <p class="text-gray-600 text-sm">{{ option.jobTitle }}</p>
-          </li>
-        </SearchWithSelect>
-      </div>
+
+    <div class="flex gap-16 mb-8">
+      <StatCard title="Пройдено тестов" :value="testsPassed" />
+      <StatCard title="Средний результат" :value="`${averageResultPercent}%`" />
+      <StatCard title="Тестов не пройдено" :value="testsTotal - testsPassed" />
+    </div>
+
+    <div class="flex gap-12">
+      <RaitingUserTable title="Лучшие работники" :users="users" />
+      <RaitingGroupTable title="Лучшие группы" :groups="groups" />
     </div>
   </section>
 </template>

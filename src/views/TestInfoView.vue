@@ -1,5 +1,5 @@
 <template>
-  <section class="p-4 flex flex-col h-full rounded-xl bg-white">
+  <section class="p-8 flex flex-col h-full rounded-xl bg-white">
     <section class="flex flex-col mb-8">
       <h2 class="text-2xl mb-3 font-semibold">{{ test?.name }}</h2>
       <p class="font-medium text-gray-500 mb-4">{{ test?.description }}</p>

@@ -29,6 +29,7 @@ export interface Test {
   questions?: Question[]
   results?: Result[]
   userTests?: UserTest[]
+  createdAt: string
 }
 
 export interface TestResult {
